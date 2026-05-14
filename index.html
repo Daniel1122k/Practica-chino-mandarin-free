@@ -301,6 +301,39 @@ const BASE_V1 = [
   { char:"日子",  pin:"rìzi",      mean:"días / vida cotidiana",       part:"p1" },
   { char:"疯",    pin:"fēng",      mean:"loco / enloquecido",          part:"p1" },
 ];
+const BASE_L36 = [
+  { char:"季节",   pin:"jì jié",        mean:"estación del año",         part:"l36" },
+  { char:"暖气",   pin:"nuǎnqì",        mean:"calefacción",              part:"l36" },
+  { char:"路线",   pin:"lùxiàn",        mean:"ruta / itinerario",        part:"l36" },
+  { char:"气候",   pin:"qìhòu",         mean:"clima",                    part:"l36" },
+  { char:"羽绒服", pin:"yǔróng fú",     mean:"abrigo de plumas",         part:"l36" },
+  { char:"草原",   pin:"cǎoyuán",       mean:"pradera / estepa",         part:"l36" },
+  { char:"复杂",   pin:"fùzá",          mean:"complicado / complejo",    part:"l36" },
+  { char:"有时候", pin:"yǒu shíhou",    mean:"a veces",                  part:"l36" },
+  { char:"选择",   pin:"xuǎnzé",        mean:"elegir / selección",       part:"l36" },
+  { char:"热带",   pin:"rèdài",         mean:"zona tropical",            part:"l36" },
+  { char:"裙子",   pin:"qúnzi",         mean:"falda",                    part:"l36" },
+  { char:"江南",   pin:"Jiāngnán",      mean:"sur del río Yangtsé",      part:"l36" },
+  { char:"寒带",   pin:"hándài",        mean:"zona polar / fría",        part:"l36" },
+  { char:"最好",   pin:"zuìhǎo",        mean:"lo mejor / es mejor que",  part:"l36" },
+  { char:"内蒙",   pin:"Nèiměng",       mean:"Mongolia Interior",        part:"l36" },
+  { char:"各",     pin:"gè",            mean:"cada / todo tipo de",      part:"l36" },
+  { char:"凉快",   pin:"liángkuai",     mean:"fresco y agradable",       part:"l36" },
+  { char:"东北",   pin:"Dōngběi",       mean:"noreste / Manchuria",      part:"l36" },
+  { char:"现代",   pin:"xiàndài",       mean:"moderno / época actual",   part:"l36" },
+  { char:"页",     pin:"yè",            mean:"página",                   part:"l36" },
+  { char:"伟大",   pin:"wěidà",         mean:"grandioso / ilustre",      part:"l36" },
+  { char:"珍贵",   pin:"zhēnguì",       mean:"precioso / valioso",       part:"l36" },
+  { char:"诗人",   pin:"shīrén",        mean:"poeta",                    part:"l36" },
+  { char:"封",     pin:"fēng",          mean:"clasificador de cartas",   part:"l36" },
+  { char:"小时候", pin:"xiǎo shíhou",   mean:"cuando era niño/a",        part:"l36" },
+  { char:"《唐诗选》", pin:"Tángshī Xuǎn", mean:"Antología de poesía Tang", part:"l36" },
+  { char:"背",     pin:"bèi",           mean:"memorizar / recitar",      part:"l36" },
+  { char:"杜甫",   pin:"Dù Fǔ",         mean:"Du Fu (poeta Tang)",       part:"l36" },
+  { char:"熟",     pin:"shú",           mean:"maduro / familiar / cocido", part:"l36" },
+  { char:"莎士比亚", pin:"Shāshìbǐyà",  mean:"Shakespeare",              part:"l36" },
+];
+
 const BASE_V2 = [
   { char:"借债",  pin:"jièzhài",   mean:"pedir dinero prestado",       part:"p2" },
   { char:"绝对",  pin:"juéduì",    mean:"absolutamente / total",       part:"p2" },
@@ -323,18 +356,16 @@ const BASE_V2 = [
   { char:"享受",  pin:"xiǎngshòu", mean:"disfrutar / gozar",           part:"p2" },
 ];
 
-// Load custom words from storage
+// Load custom words from localStorage
 let customWords = [];
-(async () => {
-  try {
-    const r = await window.storage.get('custom-words');
-    if (r) customWords = JSON.parse(r.value);
-  } catch(e) { customWords = []; }
-  rebuildVocab();
-  render();
-})();
+try {
+  const saved = localStorage.getItem('chino-custom-words');
+  if (saved) customWords = JSON.parse(saved);
+} catch(e) { customWords = []; }
+rebuildVocab();
+render();
 
-function allWords() { return [...BASE_V1, ...BASE_V2, ...customWords]; }
+function allWords() { return [...BASE_V1, ...BASE_V2, ...BASE_L36, ...customWords]; }
 
 // ── STATE ─────────────────────────────────────────────────────
 let mode = 'flash';
@@ -364,8 +395,9 @@ function shuffle(a) {
   return b;
 }
 function partLabel(p) {
-  if (p==='p1') return 'P139-140';
-  if (p==='p2') return 'P143-144';
+  if (p==='p1')  return 'P139-140';
+  if (p==='p2')  return 'P143-144';
+  if (p==='l36') return 'L36';
   return 'Extra';
 }
 
@@ -383,9 +415,10 @@ function render() {
 function pillsHTML() {
   const hasExtra = customWords.length > 0;
   const parts = [
-    {k:'all', l:'Todas'},
-    {k:'p1',  l:'P139-140'},
-    {k:'p2',  l:'P143-144'},
+    {k:'all',  l:'Todas'},
+    {k:'p1',   l:'P139-140'},
+    {k:'p2',   l:'P143-144'},
+    {k:'l36',  l:'L36'},
     ...(hasExtra ? [{k:'extra', l:'Extra ✦'}] : [])
   ];
   return `<div class="pill-row">` +
@@ -519,8 +552,13 @@ function nextDictado() {
 function listaHTML() {
   let html = pillsHTML();
   const groups = currentPart === 'all'
-    ? [{label:'P139-140', words: BASE_V1}, {label:'P143-144', words: BASE_V2}, ...(customWords.length?[{label:'Extra ✦', words: customWords}]:[]) ]
-    : [{label: currentPart==='extra'?'Extra ✦': currentPart==='p1'?'P139-140':'P143-144', words: vocab}];
+    ? [
+        {label:'P139-140', words: BASE_V1},
+        {label:'P143-144', words: BASE_V2},
+        {label:'L36',      words: BASE_L36},
+        ...(customWords.length ? [{label:'Extra ✦', words: customWords}] : [])
+      ]
+    : [{label: currentPart==='extra'?'Extra ✦': currentPart==='p1'?'P139-140': currentPart==='l36'?'L36':'P143-144', words: vocab}];
 
   groups.forEach(g => {
     html += `<div class="section-hdr">${g.label}</div>`;
@@ -539,7 +577,7 @@ function listaHTML() {
 
 async function deleteWord(idx) {
   customWords.splice(idx, 1);
-  await window.storage.set('custom-words', JSON.stringify(customWords));
+  localStorage.setItem('chino-custom-words', JSON.stringify(customWords));
   rebuildVocab(); render();
 }
 
@@ -587,9 +625,8 @@ async function saveWord() {
 
   err.textContent = '';
   customWords.push({ char, pin, mean, part: newPart });
-
-  try { await window.storage.set('custom-words', JSON.stringify(customWords)); }
-  catch(e) { console.warn('storage error', e); }
+  try { localStorage.setItem('chino-custom-words', JSON.stringify(customWords)); }
+  catch(e) { console.warn('localStorage error', e); }
 
   closeSheet();
   rebuildVocab();
