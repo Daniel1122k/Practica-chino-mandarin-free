@@ -6,228 +6,95 @@
 <title>生词练习</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=Inter:wght@300;400;500;600&display=swap');
-
   :root {
-    --green: #3d9c6e;
-    --green-light: #eaf7f1;
-    --green-dark: #2a6e4d;
-    --cream: #f5f5f7;
-    --ink: #1a1a2e;
-    --red: #e05c5c;
-    --gold: #c9a84c;
-    --card-shadow: 0 4px 24px rgba(0,0,0,0.10);
-    --radius: 18px;
+    --green:#3d9c6e; --green-light:#eaf7f1; --green-dark:#2a6e4d;
+    --cream:#f5f5f7; --ink:#1a1a2e; --red:#e05c5c; --gold:#c9a84c;
+    --shadow:0 4px 24px rgba(0,0,0,0.10); --r:18px;
   }
-
-  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-
-  html, body {
-    height: 100dvh; width: 100%; overflow: hidden;
-    background: var(--cream);
-    font-family: 'Inter', system-ui, sans-serif;
-    color: var(--ink);
-  }
-
-  /* ── SHELL ── */
-  #app {
-    display: flex; flex-direction: column;
-    height: 100dvh; max-width: 430px; margin: 0 auto;
-    position: relative; overflow: hidden;
-  }
-
-  /* ── STATUS BAR SPACER ── */
-  .status-bar { height: env(safe-area-inset-top, 0px); background: white; }
-
-  /* ── TOP BAR ── */
-  .topbar {
-    background: white; padding: 14px 20px 12px;
-    display: flex; align-items: center; justify-content: space-between;
-    border-bottom: 1px solid rgba(0,0,0,0.06);
-    position: relative; z-index: 10;
-  }
-  .topbar-title { font-family: 'Noto Serif SC', serif; font-size: 1.05rem; font-weight: 700; color: var(--green-dark); }
-  .topbar-sub { font-size: 0.7rem; color: #aaa; margin-top: 2px; }
-  .topbar-add {
-    width: 38px; height: 38px; border-radius: 50%;
-    background: var(--green); color: white; border: none;
-    font-size: 1.5rem; line-height: 1; cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    box-shadow: 0 2px 8px rgba(61,156,110,0.35);
-  }
-
-  /* ── BOTTOM NAV ── */
-  .bottomnav {
-    background: white; display: flex; justify-content: space-around;
-    padding: 10px 0 16px;
-    border-top: 1px solid rgba(0,0,0,0.06); position: relative; z-index: 10;
-    margin-bottom: 0;
-  }
-  .nav-item {
-    display: flex; flex-direction: column; align-items: center; gap: 3px;
-    background: none; border: none; cursor: pointer; padding: 4px 18px;
-    font-size: 0.65rem; font-weight: 500; color: #aaa; transition: color 0.2s;
-    font-family: 'Inter', sans-serif;
-  }
-  .nav-item svg { width: 22px; height: 22px; stroke-width: 2; }
-  .nav-item.active { color: var(--green); }
-
-  /* ── CONTENT AREA ── */
-  #content {
-    flex: 1; overflow-y: auto; overflow-x: hidden;
-    padding: 20px 16px; display: flex; flex-direction: column; align-items: center;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  /* ── PART PILLS ── */
-  .pill-row { display: flex; gap: 6px; width: 100%; margin-bottom: 16px; overflow-x: auto; padding-bottom: 2px; }
-  .pill-row::-webkit-scrollbar { display: none; }
-  .pill {
-    padding: 6px 14px; border-radius: 20px; border: 1.5px solid var(--green);
-    background: transparent; color: var(--green-dark); font-size: 0.73rem;
-    font-weight: 500; cursor: pointer; white-space: nowrap; transition: all 0.18s;
-    font-family: 'Inter', sans-serif;
-  }
-  .pill.active { background: var(--green); color: white; }
-
-  /* ── PROGRESS ── */
-  .prog-wrap { width: 100%; margin-bottom: 6px; }
-  .prog-bar { height: 3px; background: rgba(61,156,110,0.15); border-radius: 2px; overflow: hidden; }
-  .prog-fill { height: 100%; background: linear-gradient(90deg, var(--green), var(--gold)); border-radius: 2px; transition: width 0.4s; }
-  .prog-label { font-size: 0.72rem; color: #bbb; text-align: right; margin-top: 4px; }
-
-  /* ── FLASHCARD ── */
-  .card-scene { perspective: 1000px; width: 100%; height: 220px; margin-bottom: 20px; cursor: pointer; }
-  .card-inner { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 0.5s cubic-bezier(0.4,0.2,0.2,1); }
-  .card-inner.flipped { transform: rotateY(180deg); }
-  .card-face {
-    position: absolute; inset: 0; backface-visibility: hidden;
-    border-radius: var(--radius); display: flex; flex-direction: column;
-    align-items: center; justify-content: center; padding: 24px;
-    box-shadow: var(--card-shadow);
-  }
-  .card-front { background: white; }
-  .card-back { background: linear-gradient(135deg, var(--green-dark), var(--green)); transform: rotateY(180deg); color: white; }
-  .card-char { font-family: 'Noto Serif SC', serif; font-size: 4rem; font-weight: 700; line-height: 1; }
-  .card-badge {
-    position: absolute; top: 12px; left: 14px; font-size: 0.65rem;
-    background: var(--green-light); color: var(--green-dark);
-    padding: 2px 8px; border-radius: 20px; font-weight: 600;
-  }
-  .card-back .card-badge { background: rgba(255,255,255,0.18); color: rgba(255,255,255,0.85); }
-  .card-tap { font-size: 0.68rem; color: #ccc; margin-top: 12px; font-style: italic; }
-  .back-pin { font-size: 1.5rem; font-weight: 600; letter-spacing: 0.06em; margin-bottom: 8px; opacity: 0.95; }
-  .back-mean { font-size: 1rem; opacity: 0.82; text-align: center; font-style: italic; }
-  .back-ghost { font-family: 'Noto Serif SC', serif; font-size: 3rem; opacity: 0.15; position: absolute; bottom: 12px; right: 16px; }
-
-  /* ── RANDOM TOGGLE ── */
-  .toggle-row { display: flex; align-items: center; gap: 8px; width: 100%; margin-bottom: 16px; cursor: pointer; user-select: none; }
-  .tog-track { width: 40px; height: 24px; background: rgba(0,0,0,0.1); border-radius: 12px; position: relative; transition: background 0.2s; flex-shrink: 0; }
-  .tog-track.on { background: var(--green); }
-  .tog-knob { width: 20px; height: 20px; background: white; border-radius: 50%; position: absolute; top: 2px; left: 2px; transition: left 0.2s; box-shadow: 0 1px 4px rgba(0,0,0,0.2); }
-  .tog-track.on .tog-knob { left: 18px; }
-  .toggle-label { font-size: 0.82rem; color: #888; }
-
-  /* ── NAV BUTTONS ── */
-  .nav-btns { display: flex; gap: 10px; width: 100%; }
-  .nbtn {
-    flex: 1; padding: 14px; border-radius: 12px; border: none;
-    font-family: 'Inter', sans-serif; font-size: 0.95rem; font-weight: 600;
-    cursor: pointer; transition: all 0.18s;
-  }
-  .nbtn-sec { background: white; color: var(--green); border: 1.5px solid var(--green); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-  .nbtn-pri { background: var(--green); color: white; box-shadow: 0 4px 12px rgba(61,156,110,0.3); }
-  .nbtn:active { transform: scale(0.97); }
-
-  /* ── DICTADO ── */
-  .dictado-card {
-    width: 100%; background: white; border-radius: var(--radius);
-    padding: 28px 22px; box-shadow: var(--card-shadow); text-align: center; margin-bottom: 16px;
-  }
-  .d-prompt { font-size: 0.75rem; color: #bbb; margin-bottom: 10px; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; }
-  .d-pin { font-size: 2.2rem; color: var(--green); font-weight: 700; letter-spacing: 0.06em; margin-bottom: 22px; font-family: 'Noto Serif SC', serif; }
-  .d-input {
-    width: 100%; border: 2px solid rgba(0,0,0,0.08); border-radius: 12px;
-    padding: 14px; font-family: 'Noto Serif SC', serif; font-size: 2rem;
-    text-align: center; outline: none; color: var(--ink); background: var(--cream);
-    transition: border-color 0.2s; margin-bottom: 14px;
-  }
-  .d-input:focus { border-color: var(--green); }
-  .d-input.correct { border-color: #3dbb77; background: #eafaf1; }
-  .d-input.wrong { border-color: var(--red); background: #fff0f0; }
-  .d-answer { font-family: 'Noto Serif SC', serif; font-size: 1.6rem; font-weight: 700; color: var(--green-dark); min-height: 34px; }
-  .d-meaning { font-size: 0.88rem; color: #aaa; font-style: italic; min-height: 20px; margin-top: 4px; }
-  .score-row { display: flex; gap: 20px; justify-content: center; margin-top: 14px; }
-  .score-item { text-align: center; }
-  .score-val { font-size: 1.4rem; font-weight: 700; }
-  .score-lbl { font-size: 0.68rem; color: #bbb; margin-top: 2px; }
-  .s-ok .score-val { color: #3dbb77; }
-  .s-no .score-val { color: var(--red); }
-
-  /* ── LIST ── */
-  .section-hdr {
-    width: 100%; font-family: 'Noto Serif SC', serif; font-size: 0.78rem;
-    color: var(--green-dark); font-weight: 700; letter-spacing: 0.08em;
-    padding: 10px 4px 6px; border-bottom: 1.5px solid rgba(61,156,110,0.18);
-    margin-bottom: 6px; margin-top: 4px;
-  }
-  .word-row {
-    width: 100%; display: flex; align-items: center; background: white;
-    border-radius: 12px; padding: 12px 16px; gap: 12px; margin-bottom: 6px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
-  }
-  .wr-char { font-family: 'Noto Serif SC', serif; font-size: 1.3rem; font-weight: 700; min-width: 52px; }
-  .wr-pin { color: var(--green); font-size: 0.82rem; flex: 1; font-weight: 500; }
-  .wr-mean { font-size: 0.78rem; color: #aaa; text-align: right; font-style: italic; max-width: 110px; }
-  .wr-del { background: none; border: none; color: #ddd; font-size: 1rem; cursor: pointer; padding: 4px; flex-shrink: 0; }
-  .wr-del:active { color: var(--red); }
-
-  /* ── ADD WORD SHEET ── */
-  .sheet-overlay {
-    position: absolute; inset: 0; background: rgba(0,0,0,0.4);
-    z-index: 100; display: none; align-items: flex-end;
-    backdrop-filter: blur(2px);
-  }
-  .sheet-overlay.open { display: flex; }
-  .sheet {
-    width: 100%; background: white;
-    border-radius: 24px 24px 0 0;
-    padding: 20px 20px calc(20px + env(safe-area-inset-bottom, 0px));
-    transform: translateY(100%); transition: transform 0.35s cubic-bezier(0.32,0.72,0,1);
-  }
-  .sheet-overlay.open .sheet { transform: translateY(0); }
-  .sheet-handle { width: 40px; height: 4px; background: #e0e0e0; border-radius: 2px; margin: 0 auto 20px; }
-  .sheet-title { font-size: 1rem; font-weight: 700; margin-bottom: 18px; color: var(--ink); }
-  .field-label { font-size: 0.72rem; font-weight: 600; color: #aaa; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 6px; }
-  .field-input {
-    width: 100%; border: 1.5px solid rgba(0,0,0,0.1); border-radius: 10px;
-    padding: 12px 14px; font-family: 'Noto Serif SC', serif; font-size: 1.2rem;
-    outline: none; color: var(--ink); margin-bottom: 14px; background: var(--cream);
-    transition: border-color 0.2s; font-family: 'Inter', sans-serif;
-  }
-  .field-input:focus { border-color: var(--green); }
-  .field-char { font-family: 'Noto Serif SC', serif; font-size: 1.5rem; }
-  .part-pick { display: flex; gap: 8px; margin-bottom: 18px; }
-  .pp-btn {
-    flex: 1; padding: 10px; border-radius: 10px; border: 1.5px solid rgba(0,0,0,0.1);
-    background: var(--cream); font-size: 0.8rem; font-weight: 600;
-    cursor: pointer; color: #888; transition: all 0.18s; font-family: 'Inter', sans-serif;
-  }
-  .pp-btn.sel { border-color: var(--green); background: var(--green-light); color: var(--green-dark); }
-  .sheet-save {
-    width: 100%; padding: 15px; border-radius: 12px; border: none;
-    background: var(--green); color: white; font-size: 1rem; font-weight: 700;
-    cursor: pointer; font-family: 'Inter', sans-serif;
-    box-shadow: 0 4px 14px rgba(61,156,110,0.3);
-  }
-  .sheet-save:active { transform: scale(0.98); }
-  .err-msg { font-size: 0.78rem; color: var(--red); margin-bottom: 10px; min-height: 16px; }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%;width:100%;overflow:hidden;background:var(--cream);font-family:'Inter',system-ui,sans-serif;color:var(--ink)}
+  #app{display:flex;flex-direction:column;height:100dvh;max-width:430px;margin:0 auto;position:relative;overflow:hidden}
+  .topbar{background:white;padding:14px 20px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(0,0,0,0.06);z-index:10}
+  .topbar-title{font-family:'Noto Serif SC',serif;font-size:1.05rem;font-weight:700;color:var(--green-dark)}
+  .topbar-sub{font-size:0.68rem;color:#aaa;margin-top:2px}
+  .topbar-add{width:38px;height:38px;border-radius:50%;background:var(--green);color:white;border:none;font-size:1.5rem;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(61,156,110,0.35)}
+  .bottomnav{background:white;display:flex;justify-content:space-around;padding:10px 0 16px;border-top:1px solid rgba(0,0,0,0.06);z-index:10}
+  .nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;cursor:pointer;padding:4px 18px;font-size:0.65rem;font-weight:500;color:#aaa;transition:color 0.2s;font-family:'Inter',sans-serif}
+  .nav-item svg{width:22px;height:22px;stroke-width:2}
+  .nav-item.active{color:var(--green)}
+  #content{flex:1;overflow-y:auto;overflow-x:hidden;padding:16px 16px;display:flex;flex-direction:column;align-items:center;-webkit-overflow-scrolling:touch}
+  .pill-row{display:flex;gap:6px;width:100%;margin-bottom:14px;overflow-x:auto;padding-bottom:2px}
+  .pill-row::-webkit-scrollbar{display:none}
+  .pill{padding:6px 14px;border-radius:20px;border:1.5px solid var(--green);background:transparent;color:var(--green-dark);font-size:0.73rem;font-weight:500;cursor:pointer;white-space:nowrap;transition:all 0.18s;font-family:'Inter',sans-serif}
+  .pill.active{background:var(--green);color:white}
+  .prog-wrap{width:100%;margin-bottom:6px}
+  .prog-bar{height:3px;background:rgba(61,156,110,0.15);border-radius:2px;overflow:hidden}
+  .prog-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--gold));border-radius:2px;transition:width 0.4s}
+  .prog-label{font-size:0.72rem;color:#bbb;text-align:right;margin-top:4px}
+  .card-scene{perspective:1000px;width:100%;height:210px;margin-bottom:18px;cursor:pointer}
+  .card-inner{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform 0.5s cubic-bezier(0.4,0.2,0.2,1)}
+  .card-inner.flipped{transform:rotateY(180deg)}
+  .card-face{position:absolute;inset:0;backface-visibility:hidden;border-radius:var(--r);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;box-shadow:var(--shadow)}
+  .card-front{background:white}
+  .card-back{background:linear-gradient(135deg,var(--green-dark),var(--green));transform:rotateY(180deg);color:white}
+  .card-char{font-family:'Noto Serif SC',serif;font-size:3.8rem;font-weight:700;line-height:1}
+  .card-badge{position:absolute;top:12px;left:14px;font-size:0.65rem;background:var(--green-light);color:var(--green-dark);padding:2px 8px;border-radius:20px;font-weight:600}
+  .card-back .card-badge{background:rgba(255,255,255,0.18);color:rgba(255,255,255,0.85)}
+  .card-tap{font-size:0.68rem;color:#ccc;margin-top:12px;font-style:italic}
+  .back-pin{font-size:1.4rem;font-weight:600;letter-spacing:0.06em;margin-bottom:8px;opacity:0.95}
+  .back-mean{font-size:0.95rem;opacity:0.82;text-align:center;font-style:italic}
+  .back-ghost{font-family:'Noto Serif SC',serif;font-size:2.8rem;opacity:0.15;position:absolute;bottom:12px;right:16px}
+  .toggle-row{display:flex;align-items:center;gap:8px;width:100%;margin-bottom:14px;cursor:pointer;user-select:none}
+  .tog-track{width:40px;height:24px;background:rgba(0,0,0,0.1);border-radius:12px;position:relative;transition:background 0.2s;flex-shrink:0}
+  .tog-track.on{background:var(--green)}
+  .tog-knob{width:20px;height:20px;background:white;border-radius:50%;position:absolute;top:2px;left:2px;transition:left 0.2s;box-shadow:0 1px 4px rgba(0,0,0,0.2)}
+  .tog-track.on .tog-knob{left:18px}
+  .toggle-label{font-size:0.82rem;color:#888}
+  .nav-btns{display:flex;gap:10px;width:100%}
+  .nbtn{flex:1;padding:13px;border-radius:12px;border:none;font-family:'Inter',sans-serif;font-size:0.95rem;font-weight:600;cursor:pointer;transition:all 0.18s}
+  .nbtn-sec{background:white;color:var(--green);border:1.5px solid var(--green);box-shadow:0 2px 8px rgba(0,0,0,0.05)}
+  .nbtn-pri{background:var(--green);color:white;box-shadow:0 4px 12px rgba(61,156,110,0.3)}
+  .nbtn:active{transform:scale(0.97)}
+  .dictado-card{width:100%;background:white;border-radius:var(--r);padding:24px 20px;box-shadow:var(--shadow);text-align:center;margin-bottom:14px}
+  .d-prompt{font-size:0.72rem;color:#bbb;margin-bottom:8px;font-weight:500;letter-spacing:0.04em;text-transform:uppercase}
+  .d-pin{font-size:2rem;color:var(--green);font-weight:700;letter-spacing:0.06em;margin-bottom:18px;font-family:'Noto Serif SC',serif}
+  .d-input{width:100%;border:2px solid rgba(0,0,0,0.08);border-radius:12px;padding:12px;font-family:'Noto Serif SC',serif;font-size:1.8rem;text-align:center;outline:none;color:var(--ink);background:var(--cream);transition:border-color 0.2s;margin-bottom:12px}
+  .d-input:focus{border-color:var(--green)}
+  .d-input.correct{border-color:#3dbb77;background:#eafaf1}
+  .d-input.wrong{border-color:var(--red);background:#fff0f0}
+  .d-answer{font-family:'Noto Serif SC',serif;font-size:1.5rem;font-weight:700;color:var(--green-dark);min-height:30px}
+  .d-meaning{font-size:0.85rem;color:#aaa;font-style:italic;min-height:18px;margin-top:4px}
+  .score-row{display:flex;gap:20px;justify-content:center;margin-top:12px}
+  .score-item{text-align:center}
+  .score-val{font-size:1.4rem;font-weight:700}
+  .score-lbl{font-size:0.68rem;color:#bbb;margin-top:2px}
+  .s-ok .score-val{color:#3dbb77}
+  .s-no .score-val{color:var(--red)}
+  .section-hdr{width:100%;font-family:'Noto Serif SC',serif;font-size:0.78rem;color:var(--green-dark);font-weight:700;letter-spacing:0.08em;padding:10px 4px 6px;border-bottom:1.5px solid rgba(61,156,110,0.18);margin-bottom:6px;margin-top:4px}
+  .word-row{width:100%;display:flex;align-items:center;background:white;border-radius:12px;padding:11px 14px;gap:10px;margin-bottom:6px;box-shadow:0 1px 4px rgba(0,0,0,0.05)}
+  .wr-char{font-family:'Noto Serif SC',serif;font-size:1.2rem;font-weight:700;min-width:52px}
+  .wr-pin{color:var(--green);font-size:0.8rem;flex:1;font-weight:500}
+  .wr-mean{font-size:0.75rem;color:#aaa;text-align:right;font-style:italic;max-width:110px}
+  .wr-del{background:none;border:none;color:#ddd;font-size:1rem;cursor:pointer;padding:4px;flex-shrink:0}
+  .sheet-overlay{position:absolute;inset:0;background:rgba(0,0,0,0.4);z-index:100;display:none;align-items:flex-end;backdrop-filter:blur(2px)}
+  .sheet-overlay.open{display:flex}
+  .sheet{width:100%;background:white;border-radius:24px 24px 0 0;padding:20px 20px 32px;transform:translateY(100%);transition:transform 0.35s cubic-bezier(0.32,0.72,0,1)}
+  .sheet-overlay.open .sheet{transform:translateY(0)}
+  .sheet-handle{width:40px;height:4px;background:#e0e0e0;border-radius:2px;margin:0 auto 18px}
+  .sheet-title{font-size:1rem;font-weight:700;margin-bottom:16px;color:var(--ink)}
+  .field-label{font-size:0.72rem;font-weight:600;color:#aaa;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:5px}
+  .field-input{width:100%;border:1.5px solid rgba(0,0,0,0.1);border-radius:10px;padding:11px 13px;font-size:1rem;outline:none;color:var(--ink);margin-bottom:12px;background:var(--cream);transition:border-color 0.2s;font-family:'Inter',sans-serif}
+  .field-input:focus{border-color:var(--green)}
+  .field-char{font-family:'Noto Serif SC',serif;font-size:1.4rem}
+  .part-pick{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap}
+  .pp-btn{flex:1;padding:9px;border-radius:10px;border:1.5px solid rgba(0,0,0,0.1);background:var(--cream);font-size:0.75rem;font-weight:600;cursor:pointer;color:#888;transition:all 0.18s;font-family:'Inter',sans-serif;white-space:nowrap}
+  .pp-btn.sel{border-color:var(--green);background:var(--green-light);color:var(--green-dark)}
+  .sheet-save{width:100%;padding:14px;border-radius:12px;border:none;background:var(--green);color:white;font-size:1rem;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;box-shadow:0 4px 14px rgba(61,156,110,0.3)}
+  .err-msg{font-size:0.78rem;color:var(--red);margin-bottom:8px;min-height:16px}
 </style>
 </head>
 <body>
 <div id="app">
-  <div class="status-bar"></div>
-
-  <!-- TOP BAR -->
   <div class="topbar">
     <div>
       <div class="topbar-title">生词练习</div>
@@ -236,10 +103,8 @@
     <button class="topbar-add" onclick="openSheet()">+</button>
   </div>
 
-  <!-- CONTENT -->
   <div id="content"></div>
 
-  <!-- BOTTOM NAV -->
   <div class="bottomnav">
     <button class="nav-item active" id="nav-flash" onclick="setMode('flash')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="2" y="3" width="20" height="14" rx="3"/><path d="M8 21h8M12 17v4"/></svg>
@@ -255,7 +120,6 @@
     </button>
   </div>
 
-  <!-- ADD WORD SHEET -->
   <div class="sheet-overlay" id="sheet-overlay" onclick="overlayClick(event)">
     <div class="sheet" id="sheet">
       <div class="sheet-handle"></div>
@@ -265,11 +129,12 @@
       <div class="field-label">Pinyin</div>
       <input class="field-input" id="inp-pin" placeholder="例：xuéxí" maxlength="30">
       <div class="field-label">Significado</div>
-      <input class="field-input" id="inp-mean" placeholder="ejemplo: estudiar / aprender" maxlength="60">
+      <input class="field-input" id="inp-mean" placeholder="ejemplo: estudiar" maxlength="60">
       <div class="field-label">Sección</div>
       <div class="part-pick">
-        <button class="pp-btn sel" id="pp-p1" onclick="selectPart('p1')">P1 · P139-140</button>
-        <button class="pp-btn" id="pp-p2" onclick="selectPart('p2')">P2 · P143-144</button>
+        <button class="pp-btn sel" id="pp-p1" onclick="selectPart('p1')">P139-140</button>
+        <button class="pp-btn" id="pp-p2" onclick="selectPart('p2')">P143-144</button>
+        <button class="pp-btn" id="pp-l36" onclick="selectPart('l36')">L36</button>
         <button class="pp-btn" id="pp-extra" onclick="selectPart('extra')">Extra</button>
       </div>
       <div class="err-msg" id="err-msg"></div>
@@ -279,251 +144,221 @@
 </div>
 
 <script>
-// ── DATA ──────────────────────────────────────────────────────
-const BASE_V1 = [
-  { char:"挺",    pin:"tǐng",      mean:"bastante / muy",              part:"p1" },
-  { char:"节约",  pin:"jiéyuē",    mean:"ahorrar / economizar",        part:"p1" },
-  { char:"一辈子",pin:"yí bèizi",  mean:"toda la vida",                part:"p1" },
-  { char:"世纪",  pin:"shìjì",     mean:"siglo",                       part:"p1" },
-  { char:"倍",    pin:"bèi",       mean:"veces / múltiplo",            part:"p1" },
-  { char:"分之",  pin:"fēnzhī",    mean:"fracción (de)",               part:"p1" },
-  { char:"生命",  pin:"shēngmìng", mean:"vida / existencia",           part:"p1" },
-  { char:"金钱",  pin:"jīnqián",   mean:"dinero",                      part:"p1" },
-  { char:"生产",  pin:"shēngchǎn", mean:"producir / producción",       part:"p1" },
-  { char:"就是",  pin:"jiùshì",    mean:"precisamente / es que",       part:"p1" },
-  { char:"经济",  pin:"jīngjì",    mean:"economía / económico",        part:"p1" },
-  { char:"艰苦",  pin:"jiānkǔ",   mean:"arduo / dificultoso",         part:"p1" },
-  { char:"管",    pin:"guǎn",      mean:"administrar / no importa",    part:"p1" },
-  { char:"朴素",  pin:"pǔsù",      mean:"sencillo / austero",          part:"p1" },
-  { char:"积蓄",  pin:"jīxù",      mean:"ahorros / acumular",          part:"p1" },
-  { char:"勤俭",  pin:"qínjiǎn",   mean:"trabajador y frugal",         part:"p1" },
-  { char:"贷款",  pin:"dàikuǎn",   mean:"préstamo / crédito",          part:"p1" },
-  { char:"日子",  pin:"rìzi",      mean:"días / vida cotidiana",       part:"p1" },
-  { char:"疯",    pin:"fēng",      mean:"loco / enloquecido",          part:"p1" },
-];
-const BASE_L36 = [
-  { char:"季节",   pin:"jì jié",        mean:"estación del año",         part:"l36" },
-  { char:"暖气",   pin:"nuǎnqì",        mean:"calefacción",              part:"l36" },
-  { char:"路线",   pin:"lùxiàn",        mean:"ruta / itinerario",        part:"l36" },
-  { char:"气候",   pin:"qìhòu",         mean:"clima",                    part:"l36" },
-  { char:"羽绒服", pin:"yǔróng fú",     mean:"abrigo de plumas",         part:"l36" },
-  { char:"草原",   pin:"cǎoyuán",       mean:"pradera / estepa",         part:"l36" },
-  { char:"复杂",   pin:"fùzá",          mean:"complicado / complejo",    part:"l36" },
-  { char:"有时候", pin:"yǒu shíhou",    mean:"a veces",                  part:"l36" },
-  { char:"选择",   pin:"xuǎnzé",        mean:"elegir / selección",       part:"l36" },
-  { char:"热带",   pin:"rèdài",         mean:"zona tropical",            part:"l36" },
-  { char:"裙子",   pin:"qúnzi",         mean:"falda",                    part:"l36" },
-  { char:"江南",   pin:"Jiāngnán",      mean:"sur del río Yangtsé",      part:"l36" },
-  { char:"寒带",   pin:"hándài",        mean:"zona polar / fría",        part:"l36" },
-  { char:"最好",   pin:"zuìhǎo",        mean:"lo mejor / es mejor que",  part:"l36" },
-  { char:"内蒙",   pin:"Nèiměng",       mean:"Mongolia Interior",        part:"l36" },
-  { char:"各",     pin:"gè",            mean:"cada / todo tipo de",      part:"l36" },
-  { char:"凉快",   pin:"liángkuai",     mean:"fresco y agradable",       part:"l36" },
-  { char:"东北",   pin:"Dōngběi",       mean:"noreste / Manchuria",      part:"l36" },
-  { char:"现代",   pin:"xiàndài",       mean:"moderno / época actual",   part:"l36" },
-  { char:"页",     pin:"yè",            mean:"página",                   part:"l36" },
-  { char:"伟大",   pin:"wěidà",         mean:"grandioso / ilustre",      part:"l36" },
-  { char:"珍贵",   pin:"zhēnguì",       mean:"precioso / valioso",       part:"l36" },
-  { char:"诗人",   pin:"shīrén",        mean:"poeta",                    part:"l36" },
-  { char:"封",     pin:"fēng",          mean:"clasificador de cartas",   part:"l36" },
-  { char:"小时候", pin:"xiǎo shíhou",   mean:"cuando era niño/a",        part:"l36" },
-  { char:"《唐诗选》", pin:"Tángshī Xuǎn", mean:"Antología de poesía Tang", part:"l36" },
-  { char:"背",     pin:"bèi",           mean:"memorizar / recitar",      part:"l36" },
-  { char:"杜甫",   pin:"Dù Fǔ",         mean:"Du Fu (poeta Tang)",       part:"l36" },
-  { char:"熟",     pin:"shú",           mean:"maduro / familiar / cocido", part:"l36" },
-  { char:"莎士比亚", pin:"Shāshìbǐyà",  mean:"Shakespeare",              part:"l36" },
+var BASE_V1 = [
+  {char:"挺",pin:"tǐng",mean:"bastante / muy",part:"p1"},
+  {char:"节约",pin:"jiéyuē",mean:"ahorrar / economizar",part:"p1"},
+  {char:"一辈子",pin:"yí bèizi",mean:"toda la vida",part:"p1"},
+  {char:"世纪",pin:"shìjì",mean:"siglo",part:"p1"},
+  {char:"倍",pin:"bèi",mean:"veces / múltiplo",part:"p1"},
+  {char:"分之",pin:"fēnzhī",mean:"fracción (de)",part:"p1"},
+  {char:"生命",pin:"shēngmìng",mean:"vida / existencia",part:"p1"},
+  {char:"金钱",pin:"jīnqián",mean:"dinero",part:"p1"},
+  {char:"生产",pin:"shēngchǎn",mean:"producir / producción",part:"p1"},
+  {char:"就是",pin:"jiùshì",mean:"precisamente / es que",part:"p1"},
+  {char:"经济",pin:"jīngjì",mean:"economía / económico",part:"p1"},
+  {char:"艰苦",pin:"jiānkǔ",mean:"arduo / dificultoso",part:"p1"},
+  {char:"管",pin:"guǎn",mean:"administrar / no importa",part:"p1"},
+  {char:"朴素",pin:"pǔsù",mean:"sencillo / austero",part:"p1"},
+  {char:"积蓄",pin:"jīxù",mean:"ahorros / acumular",part:"p1"},
+  {char:"勤俭",pin:"qínjiǎn",mean:"trabajador y frugal",part:"p1"},
+  {char:"贷款",pin:"dàikuǎn",mean:"préstamo / crédito",part:"p1"},
+  {char:"日子",pin:"rìzi",mean:"días / vida cotidiana",part:"p1"},
+  {char:"疯",pin:"fēng",mean:"loco / enloquecido",part:"p1"}
 ];
 
-const BASE_V2 = [
-  { char:"借债",  pin:"jièzhài",   mean:"pedir dinero prestado",       part:"p2" },
-  { char:"绝对",  pin:"juéduì",    mean:"absolutamente / total",       part:"p2" },
-  { char:"困难",  pin:"kùnnan",    mean:"dificultad / difícil",        part:"p2" },
-  { char:"米",    pin:"mǐ",        mean:"arroz / metro",               part:"p2" },
-  { char:"丢人",  pin:"diūrén",    mean:"dar vergüenza / avergonzar",  part:"p2" },
-  { char:"按时",  pin:"ànshí",     mean:"a tiempo / puntualmente",     part:"p2" },
-  { char:"信用",  pin:"xìnyòng",   mean:"crédito / confianza",         part:"p2" },
-  { char:"稳定",  pin:"wěndìng",   mean:"estable / estabilizar",       part:"p2" },
-  { char:"付",    pin:"fù",        mean:"pagar",                       part:"p2" },
-  { char:"其余",  pin:"qíyú",      mean:"el resto / los demás",        part:"p2" },
-  { char:"梦话",  pin:"mènghuà",   mean:"hablar dormido / ilusión",    part:"p2" },
-  { char:"商品",  pin:"shāngpǐn",  mean:"mercancía / producto",        part:"p2" },
-  { char:"跟",    pin:"gēn",       mean:"con / seguir",                part:"p2" },
-  { char:"观念",  pin:"guānniàn",  mean:"concepto / idea",             part:"p2" },
-  { char:"时代",  pin:"shídài",    mean:"época / era",                 part:"p2" },
-  { char:"变",    pin:"biàn",      mean:"cambiar / transformar",       part:"p2" },
-  { char:"实现",  pin:"shíxiàn",   mean:"realizar / lograr",           part:"p2" },
-  { char:"好处",  pin:"hǎochu",    mean:"ventaja / beneficio",         part:"p2" },
-  { char:"享受",  pin:"xiǎngshòu", mean:"disfrutar / gozar",           part:"p2" },
+var BASE_V2 = [
+  {char:"借债",pin:"jièzhài",mean:"pedir dinero prestado",part:"p2"},
+  {char:"绝对",pin:"juéduì",mean:"absolutamente / total",part:"p2"},
+  {char:"困难",pin:"kùnnan",mean:"dificultad / difícil",part:"p2"},
+  {char:"米",pin:"mǐ",mean:"arroz / metro",part:"p2"},
+  {char:"丢人",pin:"diūrén",mean:"dar vergüenza",part:"p2"},
+  {char:"按时",pin:"ànshí",mean:"a tiempo / puntualmente",part:"p2"},
+  {char:"信用",pin:"xìnyòng",mean:"crédito / confianza",part:"p2"},
+  {char:"稳定",pin:"wěndìng",mean:"estable / estabilizar",part:"p2"},
+  {char:"付",pin:"fù",mean:"pagar",part:"p2"},
+  {char:"其余",pin:"qíyú",mean:"el resto / los demás",part:"p2"},
+  {char:"梦话",pin:"mènghuà",mean:"hablar dormido / ilusión",part:"p2"},
+  {char:"商品",pin:"shāngpǐn",mean:"mercancía / producto",part:"p2"},
+  {char:"跟",pin:"gēn",mean:"con / seguir",part:"p2"},
+  {char:"观念",pin:"guānniàn",mean:"concepto / idea",part:"p2"},
+  {char:"时代",pin:"shídài",mean:"época / era",part:"p2"},
+  {char:"变",pin:"biàn",mean:"cambiar / transformar",part:"p2"},
+  {char:"实现",pin:"shíxiàn",mean:"realizar / lograr",part:"p2"},
+  {char:"好处",pin:"hǎochu",mean:"ventaja / beneficio",part:"p2"},
+  {char:"享受",pin:"xiǎngshòu",mean:"disfrutar / gozar",part:"p2"}
 ];
 
-// Load custom words from localStorage
-let customWords = [];
+var BASE_L36 = [
+  {char:"季节",pin:"jì jié",mean:"estación del año",part:"l36"},
+  {char:"暖气",pin:"nuǎnqì",mean:"calefacción",part:"l36"},
+  {char:"路线",pin:"lùxiàn",mean:"ruta / itinerario",part:"l36"},
+  {char:"气候",pin:"qìhòu",mean:"clima",part:"l36"},
+  {char:"羽绒服",pin:"yǔróng fú",mean:"abrigo de plumas",part:"l36"},
+  {char:"草原",pin:"cǎoyuán",mean:"pradera / estepa",part:"l36"},
+  {char:"复杂",pin:"fùzá",mean:"complicado / complejo",part:"l36"},
+  {char:"有时候",pin:"yǒu shíhou",mean:"a veces",part:"l36"},
+  {char:"选择",pin:"xuǎnzé",mean:"elegir / selección",part:"l36"},
+  {char:"热带",pin:"rèdài",mean:"zona tropical",part:"l36"},
+  {char:"裙子",pin:"qúnzi",mean:"falda",part:"l36"},
+  {char:"江南",pin:"Jiāngnán",mean:"sur del río Yangtsé",part:"l36"},
+  {char:"寒带",pin:"hándài",mean:"zona polar / fría",part:"l36"},
+  {char:"最好",pin:"zuìhǎo",mean:"lo mejor / es mejor que",part:"l36"},
+  {char:"内蒙",pin:"Nèiměng",mean:"Mongolia Interior",part:"l36"},
+  {char:"各",pin:"gè",mean:"cada / todo tipo de",part:"l36"},
+  {char:"凉快",pin:"liángkuai",mean:"fresco y agradable",part:"l36"},
+  {char:"东北",pin:"Dōngběi",mean:"noreste / Manchuria",part:"l36"},
+  {char:"现代",pin:"xiàndài",mean:"moderno / época actual",part:"l36"},
+  {char:"页",pin:"yè",mean:"página",part:"l36"},
+  {char:"伟大",pin:"wěidà",mean:"grandioso / ilustre",part:"l36"},
+  {char:"珍贵",pin:"zhēnguì",mean:"precioso / valioso",part:"l36"},
+  {char:"诗人",pin:"shīrén",mean:"poeta",part:"l36"},
+  {char:"封",pin:"fēng",mean:"clasificador de cartas",part:"l36"},
+  {char:"小时候",pin:"xiǎo shíhou",mean:"cuando era niño/a",part:"l36"},
+  {char:"《唐诗选》",pin:"Tángshī Xuǎn",mean:"Antología de poesía Tang",part:"l36"},
+  {char:"背",pin:"bèi",mean:"memorizar / recitar",part:"l36"},
+  {char:"杜甫",pin:"Dù Fǔ",mean:"Du Fu (poeta Tang)",part:"l36"},
+  {char:"熟",pin:"shú",mean:"maduro / familiar / cocido",part:"l36"},
+  {char:"莎士比亚",pin:"Shāshìbǐyà",mean:"Shakespeare",part:"l36"}
+];
+
+var customWords = [];
 try {
-  const saved = localStorage.getItem('chino-custom-words');
+  var saved = localStorage.getItem('chino-custom-words');
   if (saved) customWords = JSON.parse(saved);
 } catch(e) { customWords = []; }
-rebuildVocab();
-render();
 
-function allWords() { return [...BASE_V1, ...BASE_V2, ...BASE_L36, ...customWords]; }
+var mode = 'flash';
+var currentPart = 'all';
+var randomOn = false;
+var vocab = [];
+var flashOrder = [], flashIdx = 0, flipped = false;
+var dictOrder = [], dictIdx = 0, scoreOk = 0, scoreNo = 0;
+var newPart = 'p1';
 
-// ── STATE ─────────────────────────────────────────────────────
-let mode = 'flash';
-let currentPart = 'all';
-let randomOn = false;
-let vocab = [];
-
-let flashOrder = [], flashIdx = 0, flipped = false;
-let dictOrder = [], dictIdx = 0, scoreOk = 0, scoreNo = 0;
-let newPart = 'p1';
+function allWords() { return BASE_V1.concat(BASE_V2).concat(BASE_L36).concat(customWords); }
 
 function rebuildVocab() {
-  const all = allWords();
+  var all = allWords();
   if (currentPart === 'all') vocab = all;
-  else if (currentPart === 'extra') vocab = customWords;
-  else vocab = all.filter(w => w.part === currentPart);
+  else if (currentPart === 'extra') vocab = customWords.slice();
+  else vocab = all.filter(function(w){ return w.part === currentPart; });
   if (vocab.length === 0) vocab = all;
 }
 
-// ── UTILS ─────────────────────────────────────────────────────
 function shuffle(a) {
-  const b = [...a];
-  for (let i = b.length-1; i>0; i--) {
-    const j = Math.floor(Math.random()*(i+1));
-    [b[i],b[j]] = [b[j],b[i]];
+  var b = a.slice();
+  for (var i = b.length-1; i>0; i--) {
+    var j = Math.floor(Math.random()*(i+1));
+    var t = b[i]; b[i] = b[j]; b[j] = t;
   }
   return b;
 }
+
 function partLabel(p) {
-  if (p==='p1')  return 'P139-140';
-  if (p==='p2')  return 'P143-144';
+  if (p==='p1') return 'P139-140';
+  if (p==='p2') return 'P143-144';
   if (p==='l36') return 'L36';
   return 'Extra';
 }
 
-// ── RENDER ────────────────────────────────────────────────────
-function render() {
-  rebuildVocab();
-  const c = document.getElementById('content');
-  if (mode === 'flash') c.innerHTML = flashHTML();
-  if (mode === 'dictado') { c.innerHTML = dictadoHTML(); dictInit(); }
-  if (mode === 'lista') c.innerHTML = listaHTML();
-  attachEvents();
-}
-
-// ── PILLS ─────────────────────────────────────────────────────
-function pillsHTML() {
-  const hasExtra = customWords.length > 0;
-  const parts = [
-    {k:'all',  l:'Todas'},
-    {k:'p1',   l:'P139-140'},
-    {k:'p2',   l:'P143-144'},
-    {k:'l36',  l:'L36'},
-    ...(hasExtra ? [{k:'extra', l:'Extra ✦'}] : [])
-  ];
-  return `<div class="pill-row">` +
-    parts.map(p => `<button class="pill${currentPart===p.k?' active':''}" onclick="setPart('${p.k}')">${p.l}</button>`).join('') +
-    `</div>`;
-}
-
-function progHTML(i, total) {
-  const pct = total ? ((i+1)/total*100) : 0;
-  return `<div class="prog-wrap">
-    <div class="prog-bar"><div class="prog-fill" style="width:${pct}%"></div></div>
-    <div class="prog-label">${i+1} / ${total}</div>
-  </div>`;
-}
-
-// ── FLASH ─────────────────────────────────────────────────────
 function initFlashOrder() {
-  const idx = [...Array(vocab.length).keys()];
+  var idx = [];
+  for (var i=0; i<vocab.length; i++) idx.push(i);
   flashOrder = randomOn ? shuffle(idx) : idx;
 }
 
+function setProgress(i, total) {
+  var pct = total ? ((i+1)/total*100) : 0;
+  var fb = document.getElementById('prog-fill');
+  var fl = document.getElementById('prog-label');
+  if (fb) fb.style.width = pct + '%';
+  if (fl) fl.textContent = (i+1) + ' / ' + total;
+}
+
+function pillsHTML() {
+  var hasExtra = customWords.length > 0;
+  var parts = [
+    {k:'all', l:'Todas'},
+    {k:'p1',  l:'P139-140'},
+    {k:'p2',  l:'P143-144'},
+    {k:'l36', l:'L36'}
+  ];
+  if (hasExtra) parts.push({k:'extra', l:'Extra ✦'});
+  var h = '<div class="pill-row">';
+  parts.forEach(function(p){
+    h += '<button class="pill' + (currentPart===p.k?' active':'') + '" onclick="setPart(\''+p.k+'\')">' + p.l + '</button>';
+  });
+  return h + '</div>';
+}
+
+function progHTML(i, total) {
+  var pct = total ? ((i+1)/total*100) : 0;
+  return '<div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:'+pct+'%"></div></div><div class="prog-label" id="prog-label">'+(i+1)+' / '+total+'</div></div>';
+}
+
+// ── FLASH ──
 function flashHTML() {
-  if (!flashOrder.length || flashOrder[0] >= vocab.length) { flashIdx=0; initFlashOrder(); }
-  const w = vocab[flashOrder[flashIdx]] || vocab[0];
-  return `
-    ${pillsHTML()}
-    ${progHTML(flashIdx, vocab.length)}
-    <div class="toggle-row" onclick="toggleRandom()">
-      <div class="tog-track${randomOn?' on':''}" id="tog"><div class="tog-knob"></div></div>
-      <span class="toggle-label">Orden aleatorio</span>
-    </div>
-    <div class="card-scene" onclick="flipCard()">
-      <div class="card-inner${flipped?' flipped':''}" id="card-inner">
-        <div class="card-face card-front">
-          <div class="card-badge">${partLabel(w.part)}</div>
-          <div class="card-char">${w.char}</div>
-          <div class="card-tap">toca para ver el significado</div>
-        </div>
-        <div class="card-face card-back">
-          <div class="card-badge">${partLabel(w.part)}</div>
-          <div class="back-pin">${w.pin}</div>
-          <div class="back-mean">${w.mean}</div>
-          <div class="back-ghost">${w.char}</div>
-        </div>
-      </div>
-    </div>
-    <div class="nav-btns">
-      <button class="nbtn nbtn-sec" onclick="prevCard()">← Anterior</button>
-      <button class="nbtn nbtn-pri" onclick="nextCard()">Siguiente →</button>
-    </div>`;
+  var w = vocab[flashOrder[flashIdx]] || vocab[0];
+  return pillsHTML() + progHTML(flashIdx, vocab.length) +
+    '<div class="toggle-row" onclick="toggleRandom()">' +
+      '<div class="tog-track'+(randomOn?' on':'')+'"><div class="tog-knob"></div></div>' +
+      '<span class="toggle-label">Orden aleatorio</span>' +
+    '</div>' +
+    '<div class="card-scene" onclick="flipCard()">' +
+      '<div class="card-inner'+(flipped?' flipped':'')+'" id="card-inner">' +
+        '<div class="card-face card-front">' +
+          '<div class="card-badge">'+partLabel(w.part)+'</div>' +
+          '<div class="card-char">'+w.char+'</div>' +
+          '<div class="card-tap">toca para ver el significado</div>' +
+        '</div>' +
+        '<div class="card-face card-back">' +
+          '<div class="card-badge">'+partLabel(w.part)+'</div>' +
+          '<div class="back-pin">'+w.pin+'</div>' +
+          '<div class="back-mean">'+w.mean+'</div>' +
+          '<div class="back-ghost">'+w.char+'</div>' +
+        '</div>' +
+      '</div>' +
+    '</div>' +
+    '<div class="nav-btns">' +
+      '<button class="nbtn nbtn-sec" onclick="prevCard()">← Anterior</button>' +
+      '<button class="nbtn nbtn-pri" onclick="nextCard()">Siguiente →</button>' +
+    '</div>';
 }
 
 function flipCard() {
   flipped = !flipped;
-  const el = document.getElementById('card-inner');
+  var el = document.getElementById('card-inner');
   if (el) el.classList.toggle('flipped', flipped);
 }
 function nextCard() { flashIdx=(flashIdx+1)%vocab.length; flipped=false; render(); }
 function prevCard() { flashIdx=(flashIdx-1+vocab.length)%vocab.length; flipped=false; render(); }
 function toggleRandom() { randomOn=!randomOn; flashIdx=0; flipped=false; initFlashOrder(); render(); }
 
-// ── DICTADO ──────────────────────────────────────────────────
-function dictInit() {
-  if (!dictOrder.length) {
-    dictOrder = shuffle([...Array(vocab.length).keys()]);
-    dictIdx = 0; scoreOk = 0; scoreNo = 0;
-  }
-  const el = document.getElementById('d-input');
-  if (el) setTimeout(() => el.focus(), 100);
-}
-
+// ── DICTADO ──
 function dictadoHTML() {
-  const w = vocab[dictOrder[dictIdx]||0] || vocab[0];
-  return `
-    ${pillsHTML()}
-    ${progHTML(dictIdx, vocab.length)}
-    <div class="dictado-card">
-      <div class="d-prompt">Escribe el carácter para</div>
-      <div class="d-pin">${w.pin}</div>
-      <input class="d-input" id="d-input" placeholder="写汉字…"
-        autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
-        oninput="checkDictado()">
-      <div class="d-answer" id="d-answer"></div>
-      <div class="d-meaning" id="d-meaning"></div>
-    </div>
-    <div class="nav-btns">
-      <button class="nbtn nbtn-sec" onclick="showAnswer()">Ver respuesta</button>
-      <button class="nbtn nbtn-pri" onclick="nextDictado()">Siguiente →</button>
-    </div>
-    <div class="score-row">
-      <div class="score-item s-ok">
-        <div class="score-val">${scoreOk}</div>
-        <div class="score-lbl">Correctas</div>
-      </div>
-      <div class="score-item s-no">
-        <div class="score-val">${scoreNo}</div>
-        <div class="score-lbl">Incorrectas</div>
-      </div>
-    </div>`;
+  var w = vocab[dictOrder[dictIdx]||0] || vocab[0];
+  return pillsHTML() + progHTML(dictIdx, vocab.length) +
+    '<div class="dictado-card">' +
+      '<div class="d-prompt">Escribe el carácter para</div>' +
+      '<div class="d-pin">'+w.pin+'</div>' +
+      '<input class="d-input" id="d-input" placeholder="写汉字…" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" oninput="checkDictado()">' +
+      '<div class="d-answer" id="d-answer"></div>' +
+      '<div class="d-meaning" id="d-meaning"></div>' +
+    '</div>' +
+    '<div class="nav-btns">' +
+      '<button class="nbtn nbtn-sec" onclick="showAnswer()">Ver respuesta</button>' +
+      '<button class="nbtn nbtn-pri" onclick="nextDictado()">Siguiente →</button>' +
+    '</div>' +
+    '<div class="score-row">' +
+      '<div class="score-item s-ok"><div class="score-val">'+scoreOk+'</div><div class="score-lbl">Correctas</div></div>' +
+      '<div class="score-item s-no"><div class="score-val">'+scoreNo+'</div><div class="score-lbl">Incorrectas</div></div>' +
+    '</div>';
 }
 
 function checkDictado() {
-  const w = vocab[dictOrder[dictIdx]||0] || vocab[0];
-  const inp = document.getElementById('d-input');
-  if (!inp) return;
+  var w = vocab[dictOrder[dictIdx]||0] || vocab[0];
+  var inp = document.getElementById('d-input');
+  if (!inp || inp.disabled) return;
   if (inp.value.trim() === w.char) {
     inp.className='d-input correct'; inp.disabled=true;
     document.getElementById('d-answer').textContent = '✓ '+w.char;
@@ -534,8 +369,8 @@ function checkDictado() {
 }
 
 function showAnswer() {
-  const w = vocab[dictOrder[dictIdx]||0] || vocab[0];
-  const inp = document.getElementById('d-input');
+  var w = vocab[dictOrder[dictIdx]||0] || vocab[0];
+  var inp = document.getElementById('d-input');
   if (!inp || inp.disabled) return;
   inp.className='d-input wrong'; inp.disabled=true;
   document.getElementById('d-answer').textContent = w.char;
@@ -543,63 +378,63 @@ function showAnswer() {
   scoreNo++;
 }
 
-function nextDictado() {
-  dictIdx = (dictIdx+1) % vocab.length;
-  render();
-}
+function nextDictado() { dictIdx=(dictIdx+1)%vocab.length; render(); }
 
-// ── LISTA ─────────────────────────────────────────────────────
+// ── LISTA ──
 function listaHTML() {
-  let html = pillsHTML();
-  const groups = currentPart === 'all'
-    ? [
-        {label:'P139-140', words: BASE_V1},
-        {label:'P143-144', words: BASE_V2},
-        {label:'L36',      words: BASE_L36},
-        ...(customWords.length ? [{label:'Extra ✦', words: customWords}] : [])
-      ]
-    : [{label: currentPart==='extra'?'Extra ✦': currentPart==='p1'?'P139-140': currentPart==='l36'?'L36':'P143-144', words: vocab}];
-
-  groups.forEach(g => {
-    html += `<div class="section-hdr">${g.label}</div>`;
-    g.words.forEach((w,i) => {
-      const isCustom = customWords.includes(w);
-      html += `<div class="word-row">
-        <div class="wr-char">${w.char}</div>
-        <div class="wr-pin">${w.pin}</div>
-        <div class="wr-mean">${w.mean}</div>
-        ${isCustom ? `<button class="wr-del" onclick="deleteWord(${customWords.indexOf(w)})" title="Eliminar">✕</button>` : ''}
-      </div>`;
+  var html = pillsHTML();
+  var groups;
+  if (currentPart === 'all') {
+    groups = [
+      {label:'P139-140', words: BASE_V1},
+      {label:'P143-144', words: BASE_V2},
+      {label:'L36',      words: BASE_L36}
+    ];
+    if (customWords.length) groups.push({label:'Extra ✦', words: customWords});
+  } else {
+    var lbl = currentPart==='p1'?'P139-140': currentPart==='p2'?'P143-144': currentPart==='l36'?'L36':'Extra ✦';
+    groups = [{label: lbl, words: vocab}];
+  }
+  groups.forEach(function(g){
+    html += '<div class="section-hdr">'+g.label+'</div>';
+    g.words.forEach(function(w){
+      var isCustom = customWords.indexOf(w) !== -1;
+      var idx = customWords.indexOf(w);
+      html += '<div class="word-row">' +
+        '<div class="wr-char">'+w.char+'</div>' +
+        '<div class="wr-pin">'+w.pin+'</div>' +
+        '<div class="wr-mean">'+w.mean+'</div>' +
+        (isCustom ? '<button class="wr-del" onclick="deleteWord('+idx+')">✕</button>' : '') +
+        '</div>';
     });
   });
   return html;
 }
 
-async function deleteWord(idx) {
+function deleteWord(idx) {
   customWords.splice(idx, 1);
-  localStorage.setItem('chino-custom-words', JSON.stringify(customWords));
+  try { localStorage.setItem('chino-custom-words', JSON.stringify(customWords)); } catch(e){}
   rebuildVocab(); render();
 }
 
-// ── ADD SHEET ─────────────────────────────────────────────────
+// ── SHEET ──
 function openSheet() {
   document.getElementById('err-msg').textContent = '';
   document.getElementById('inp-char').value = '';
   document.getElementById('inp-pin').value = '';
   document.getElementById('inp-mean').value = '';
   selectPart('p1');
-  const ov = document.getElementById('sheet-overlay');
-  ov.style.display='flex';
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => { ov.classList.add('open'); });
+  var ov = document.getElementById('sheet-overlay');
+  ov.style.display = 'flex';
+  requestAnimationFrame(function(){
+    requestAnimationFrame(function(){ ov.classList.add('open'); });
   });
-  setTimeout(() => document.getElementById('inp-char').focus(), 400);
 }
 
 function closeSheet() {
-  const ov = document.getElementById('sheet-overlay');
+  var ov = document.getElementById('sheet-overlay');
   ov.classList.remove('open');
-  setTimeout(() => ov.style.display='none', 350);
+  setTimeout(function(){ ov.style.display='none'; }, 350);
 }
 
 function overlayClick(e) {
@@ -608,37 +443,35 @@ function overlayClick(e) {
 
 function selectPart(p) {
   newPart = p;
-  ['p1','p2','extra'].forEach(k =>
-    document.getElementById('pp-'+k)?.classList.toggle('sel', k===p)
-  );
+  ['p1','p2','l36','extra'].forEach(function(k){
+    var el = document.getElementById('pp-'+k);
+    if (el) el.classList.toggle('sel', k===p);
+  });
 }
 
-async function saveWord() {
-  const char = document.getElementById('inp-char').value.trim();
-  const pin  = document.getElementById('inp-pin').value.trim();
-  const mean = document.getElementById('inp-mean').value.trim();
-  const err  = document.getElementById('err-msg');
-
+function saveWord() {
+  var char = document.getElementById('inp-char').value.trim();
+  var pin  = document.getElementById('inp-pin').value.trim();
+  var mean = document.getElementById('inp-mean').value.trim();
+  var err  = document.getElementById('err-msg');
   if (!char) { err.textContent='Ingresa el carácter 汉字'; return; }
   if (!pin)  { err.textContent='Ingresa el pinyin'; return; }
   if (!mean) { err.textContent='Ingresa el significado'; return; }
-
   err.textContent = '';
-  customWords.push({ char, pin, mean, part: newPart });
-  try { localStorage.setItem('chino-custom-words', JSON.stringify(customWords)); }
-  catch(e) { console.warn('localStorage error', e); }
-
+  customWords.push({char:char, pin:pin, mean:mean, part:newPart});
+  try { localStorage.setItem('chino-custom-words', JSON.stringify(customWords)); } catch(e){}
   closeSheet();
   rebuildVocab();
   render();
 }
 
-// ── MODE / PART SWITCH ────────────────────────────────────────
+// ── MODE / PART ──
 function setMode(m) {
   mode = m;
-  if (m !== 'dictado') { dictOrder = []; }
-  ['flash','dictado','lista'].forEach(k => {
-    document.getElementById('nav-'+k)?.classList.toggle('active', k===m);
+  if (m !== 'dictado') { dictOrder = []; dictIdx = 0; scoreOk = 0; scoreNo = 0; }
+  ['flash','dictado','lista'].forEach(function(k){
+    var el = document.getElementById('nav-'+k);
+    if (el) el.classList.toggle('active', k===m);
   });
   flipped = false;
   render();
@@ -652,18 +485,17 @@ function setPart(p) {
   render();
 }
 
-// ── ATTACH EVENTS ─────────────────────────────────────────────
-function attachEvents() {
-  // keyboard shortcuts
-  document.onkeydown = e => {
-    if (e.key==='ArrowRight' && mode==='flash') nextCard();
-    if (e.key==='ArrowLeft'  && mode==='flash') prevCard();
-    if (e.key===' '          && mode==='flash') { e.preventDefault(); flipCard(); }
-    if (e.key==='Enter'      && mode==='dictado') nextDictado();
-  };
+function render() {
+  rebuildVocab();
+  var c = document.getElementById('content');
+  if (!c) return;
+  if (mode === 'flash')   { c.innerHTML = flashHTML(); }
+  if (mode === 'dictado') { c.innerHTML = dictadoHTML(); setTimeout(function(){ var i=document.getElementById('d-input'); if(i) i.focus(); }, 100); }
+  if (mode === 'lista')   { c.innerHTML = listaHTML(); }
 }
 
-// ── INIT ──────────────────────────────────────────────────────
+// ── START ──
+rebuildVocab();
 initFlashOrder();
 render();
 </script>
