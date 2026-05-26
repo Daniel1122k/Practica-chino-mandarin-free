@@ -221,6 +221,48 @@ var BASE_L36 = [
   {char:"莎士比亚",pin:"Shāshìbǐyà",mean:"Shakespeare",part:"l36"}
 ];
 
+var BASE_L37 = [
+  {char:"埋单",pin:"máidān",mean:"pagar la cuenta",part:"l37"},
+  {char:"晚饭",pin:"wǎnfàn",mean:"cena / comida de la noche",part:"l37"},
+  {char:"越",pin:"yuè",mean:"cuanto más... más...",part:"l37"},
+  {char:"餐厅",pin:"cāntīng",mean:"restaurante / comedor",part:"l37"},
+  {char:"味道",pin:"wèidao",mean:"sabor / gusto",part:"l37"},
+  {char:"账单",pin:"zhàngdān",mean:"cuenta / factura",part:"l37"},
+  {char:"回",pin:"huí",mean:"regresar / volver",part:"l37"},
+  {char:"抢",pin:"qiǎng",mean:"arrebatar / competir por",part:"l37"},
+  {char:"约",pin:"yuē",mean:"acordar / citar / aproximadamente",part:"l37"},
+  {char:"由",pin:"yóu",mean:"por / debido a / depender de",part:"l37"},
+  {char:"明白",pin:"míngbai",mean:"entender / comprender / claro",part:"l37"},
+  {char:"AA制",pin:"AA zhì",mean:"dividir la cuenta / pagar a partes iguales",part:"l37"},
+  {char:"请客",pin:"qǐngkè",mean:"invitar / pagar la cuenta",part:"l37"},
+  {char:"笑话",pin:"xiàohua",mean:"chiste / broma",part:"l37"},
+  {char:"球场",pin:"qiúchǎng",mean:"cancha / campo deportivo",part:"l37"},
+  {char:"橄榄球",pin:"gǎnlǎnqiú",mean:"rugby / fútbol americano",part:"l37"},
+  {char:"添",pin:"tiān",mean:"añadir / agregar",part:"l37"},
+  {char:"大方",pin:"dàfang",mean:"generoso / elegante / natural",part:"l37"},
+  {char:"事先",pin:"shìxiān",mean:"de antemano / con anticipación",part:"l37"},
+  {char:"最后",pin:"zuìhòu",mean:"finalmente / al final / último",part:"l37"},
+  {char:"羊肉",pin:"yángròu",mean:"carne de ovino / cordero",part:"l37"},
+  {char:"班",pin:"bān",mean:"grupo / clase",part:"l37"},
+  {char:"烤全羊",pin:"kǎoquányáng",mean:"cordero asado entero",part:"l37"},
+  {char:"按",pin:"àn",mean:"según / de acuerdo con",part:"l37"},
+  {char:"抬",pin:"tái",mean:"levantar / subir",part:"l37"},
+  {char:"举",pin:"jǔ",mean:"levantar / alzar",part:"l37"},
+  {char:"酒杯",pin:"jiǔbēi",mean:"copa de vino",part:"l37"},
+  {char:"民歌",pin:"míngē",mean:"canción popular / tradicional",part:"l37"},
+  {char:"饭店",pin:"fàndiàn",mean:"hotel / restaurante",part:"l37"},
+  {char:"首先",pin:"shǒuxiān",mean:"ante todo / en primer lugar",part:"l37"},
+  {char:"敬酒",pin:"jìngjiǔ",mean:"ofrecer una copa de vino",part:"l37"},
+  {char:"敬",pin:"jìng",mean:"respetar / ofrecer cortésmente",part:"l37"},
+  {char:"受",pin:"shòu",mean:"recibir / aceptar",part:"l37"},
+  {char:"尊敬",pin:"zūnjìng",mean:"respetar / honrar",part:"l37"},
+  {char:"然后",pin:"ránhòu",mean:"después / más tarde",part:"l37"},
+  {char:"接着",pin:"jiēzhe",mean:"seguir / continuar",part:"l37"},
+  {char:"愉快",pin:"yúkuài",mean:"alegre / jubiloso",part:"l37"},
+  {char:"蒙族",pin:"Měngzú",mean:"grupo étnico de Mongolia",part:"l37"},
+  {char:"新疆",pin:"Xīnjiāng",mean:"Xinjiang (región autónoma de China)",part:"l37"}
+];
+
 var customWords = [];
 try {
   var saved = localStorage.getItem('chino-custom-words');
@@ -235,7 +277,7 @@ var flashOrder = [], flashIdx = 0, flipped = false;
 var dictOrder = [], dictIdx = 0, scoreOk = 0, scoreNo = 0;
 var newPart = 'p1';
 
-function allWords() { return BASE_V1.concat(BASE_V2).concat(BASE_L36).concat(customWords); }
+function allWords() { return BASE_V1.concat(BASE_V2).concat(BASE_L36).concat(BASE_L37).concat(customWords); }
 
 function rebuildVocab() {
   var all = allWords();
@@ -258,6 +300,7 @@ function partLabel(p) {
   if (p==='p1') return 'P139-140';
   if (p==='p2') return 'P143-144';
   if (p==='l36') return 'L36';
+  if (p==='l37') return 'L37';
   return 'Extra';
 }
 
@@ -281,7 +324,8 @@ function pillsHTML() {
     {k:'all', l:'Todas'},
     {k:'p1',  l:'P139-140'},
     {k:'p2',  l:'P143-144'},
-    {k:'l36', l:'L36'}
+    {k:'l36', l:'L36'},
+    {k:'l37', l:'L37'}
   ];
   if (hasExtra) parts.push({k:'extra', l:'Extra ✦'});
   var h = '<div class="pill-row">';
@@ -388,11 +432,12 @@ function listaHTML() {
     groups = [
       {label:'P139-140', words: BASE_V1},
       {label:'P143-144', words: BASE_V2},
-      {label:'L36',      words: BASE_L36}
+      {label:'L36',      words: BASE_L36},
+      {label:'L37',      words: BASE_L37}
     ];
     if (customWords.length) groups.push({label:'Extra ✦', words: customWords});
   } else {
-    var lbl = currentPart==='p1'?'P139-140': currentPart==='p2'?'P143-144': currentPart==='l36'?'L36':'Extra ✦';
+    var lbl = currentPart==='p1'?'P139-140': currentPart==='p2'?'P143-144': currentPart==='l36'?'L36': currentPart==='l37'?'L37':'Extra ✦';
     groups = [{label: lbl, words: vocab}];
   }
   groups.forEach(function(g){
