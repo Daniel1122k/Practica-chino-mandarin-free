@@ -263,6 +263,50 @@ var BASE_L37 = [
   {char:"新疆",pin:"Xīnjiāng",mean:"Xinjiang (región autónoma de China)",part:"l37"}
 ];
 
+var BASE_L38 = [
+  {char:"太太",pin:"tàitai",mean:"señora / esposa",part:"l38"},
+  {char:"嫁",pin:"jià",mean:"casarse (mujer) / contraer matrimonio",part:"l38"},
+  {char:"新婚",pin:"xīnhūn",mean:"recién casados",part:"l38"},
+  {char:"幸福",pin:"xìngfú",mean:"feliz / felicidad",part:"l38"},
+  {char:"政府",pin:"zhèngfǔ",mean:"gobierno",part:"l38"},
+  {char:"登记",pin:"dēngjì",mean:"registrarse / inscribirse",part:"l38"},
+  {char:"结婚证",pin:"jiéhūnzhèng",mean:"certificado de matrimonio",part:"l38"},
+  {char:"喜糖",pin:"xǐtáng",mean:"caramelos de boda",part:"l38"},
+  {char:"举行",pin:"jǔxíng",mean:"celebrar / realizar (una ceremonia)",part:"l38"},
+  {char:"婚礼",pin:"hūnlǐ",mean:"boda / ceremonia de matrimonio",part:"l38"},
+  {char:"贴",pin:"tiē",mean:"pegar / adherir",part:"l38"},
+  {char:"红双喜字",pin:"hóng shuāngxǐ zì",mean:"el carácter 囍 en rojo",part:"l38"},
+  {char:"双喜",pin:"shuāngxǐ",mean:"doble felicidad",part:"l38"},
+  {char:"双",pin:"shuāng",mean:"par / doble",part:"l38"},
+  {char:"新娘",pin:"xīnniáng",mean:"novia",part:"l38"},
+  {char:"花轿",pin:"huājiào",mean:"palanquín nupcial",part:"l38"},
+  {char:"宴席",pin:"yànxí",mean:"banquete / festín",part:"l38"},
+  {char:"客人",pin:"kèren",mean:"invitado / visita",part:"l38"},
+  {char:"教堂",pin:"jiàotáng",mean:"iglesia / catedral",part:"l38"},
+  {char:"亲戚",pin:"qīnqi",mean:"pariente / familiar",part:"l38"},
+  {char:"表姐",pin:"biǎojiě",mean:"prima mayor",part:"l38"},
+  {char:"只是",pin:"zhǐshì",mean:"solo / solamente",part:"l38"},
+  {char:"岳父",pin:"yuèfù",mean:"suegro (padre de la esposa)",part:"l38"},
+  {char:"岳母",pin:"yuèmǔ",mean:"suegra (madre de la esposa)",part:"l38"},
+  {char:"杰克",pin:"Jiékè",mean:"Jack (personaje australiano)",part:"l38"},
+  {char:"李玉兰",pin:"Lǐ Yùlán",mean:"Li Yulan (personaje chino)",part:"l38"},
+  {char:"开口",pin:"kāikǒu",mean:"abrir la boca / empezar a hablar",part:"l38"},
+  {char:"口",pin:"kǒu",mean:"boca",part:"l38"},
+  {char:"商量",pin:"shāngliang",mean:"discutir / hablar sobre",part:"l38"},
+  {char:"俩",pin:"liǎ",mean:"dos (personas)",part:"l38"},
+  {char:"脑筋",pin:"nǎojīn",mean:"cerebro / mente / manera de pensar",part:"l38"},
+  {char:"规矩",pin:"guīju",mean:"reglas / costumbres / maneras",part:"l38"},
+  {char:"生气",pin:"shēngqì",mean:"enfadarse / enojarse",part:"l38"},
+  {char:"大事",pin:"dàshì",mean:"tema importante / asunto grande",part:"l38"},
+  {char:"邻居",pin:"línjū",mean:"vecino",part:"l38"},
+  {char:"胡同",pin:"hútòng",mean:"callejón / sendero (típico de Beijing)",part:"l38"},
+  {char:"批评",pin:"pīpíng",mean:"criticar",part:"l38"},
+  {char:"决定",pin:"juédìng",mean:"decidir / decisión",part:"l38"},
+  {char:"厨师",pin:"chúshī",mean:"cocinero / chef",part:"l38"},
+  {char:"姑爷",pin:"gūye",mean:"yerno",part:"l38"},
+  {char:"悉尼",pin:"Xīní",mean:"Sidney",part:"l38"},
+];
+
 var customWords = [];
 try {
   var saved = localStorage.getItem('chino-custom-words');
@@ -277,7 +321,7 @@ var flashOrder = [], flashIdx = 0, flipped = false;
 var dictOrder = [], dictIdx = 0, scoreOk = 0, scoreNo = 0;
 var newPart = 'p1';
 
-function allWords() { return BASE_V1.concat(BASE_V2).concat(BASE_L36).concat(BASE_L37).concat(customWords); }
+function allWords() { return BASE_V1.concat(BASE_V2).concat(BASE_L36).concat(BASE_L37).concat(BASE_L38).concat(customWords); }
 
 function rebuildVocab() {
   var all = allWords();
@@ -297,10 +341,11 @@ function shuffle(a) {
 }
 
 function partLabel(p) {
-  if (p==='p1') return 'P139-140';
-  if (p==='p2') return 'P143-144';
+  if (p==='p1')  return 'P139-140';
+  if (p==='p2')  return 'P143-144';
   if (p==='l36') return 'L36';
   if (p==='l37') return 'L37';
+  if (p==='l38') return 'L38';
   return 'Extra';
 }
 
@@ -325,7 +370,8 @@ function pillsHTML() {
     {k:'p1',  l:'P139-140'},
     {k:'p2',  l:'P143-144'},
     {k:'l36', l:'L36'},
-    {k:'l37', l:'L37'}
+    {k:'l37', l:'L37'},
+    {k:'l38', l:'L38'}
   ];
   if (hasExtra) parts.push({k:'extra', l:'Extra ✦'});
   var h = '<div class="pill-row">';
@@ -433,11 +479,12 @@ function listaHTML() {
       {label:'P139-140', words: BASE_V1},
       {label:'P143-144', words: BASE_V2},
       {label:'L36',      words: BASE_L36},
-      {label:'L37',      words: BASE_L37}
+      {label:'L37',      words: BASE_L37},
+      {label:'L38',      words: BASE_L38}
     ];
     if (customWords.length) groups.push({label:'Extra ✦', words: customWords});
   } else {
-    var lbl = currentPart==='p1'?'P139-140': currentPart==='p2'?'P143-144': currentPart==='l36'?'L36': currentPart==='l37'?'L37':'Extra ✦';
+    var lbl = {p1:'P139-140',p2:'P143-144',l36:'L36',l37:'L37',l38:'L38',extra:'Extra ✦'}[currentPart] || 'Todas';
     groups = [{label: lbl, words: vocab}];
   }
   groups.forEach(function(g){
